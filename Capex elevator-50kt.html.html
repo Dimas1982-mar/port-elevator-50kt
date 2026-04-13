@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Дашборд: Портовый элеватор 50 000 т | 1$ = 75₽</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f5;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            padding: 16px 12px 40px;
+            color: #1a2c3e;
+        }
+
+        .dashboard {
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        /* карточки */
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            transition: all 0.1s ease;
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, #0b3b3f 0%, #1c5a5e 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0,32,32,0.15);
+        }
+
+        .badge-warning {
+            background: #fef9e3;
+            border-left: 5px solid #e67e22;
+            font-size: 0.8rem;
+            padding: 12px 14px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            color: #7a5c00;
+            background-color: #fff7e8;
+        }
+
+        .grid-2col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        .stat-box {
+            flex: 1;
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 14px 12px;
+            text-align: center;
+            box-shadow: inset 0 0 0 1px #e2e8f0, 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #5a6e7c;
+        }
+
+        .stat-value {
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin: 6px 0 2px;
+            line-height: 1.2;
+            color: #0f2b35;
+        }
+
+        .stat-sub {
+            font-size: 0.7rem;
+            color: #6c7e8b;
+        }
+
+        .rub {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #2c6e2f;
+        }
+
+        hr {
+            margin: 16px 0;
+            border: none;
+            border-top: 2px dotted #dce5ec;
+        }
+
+        .phase-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .phase-table th {
+            text-align: left;
+            padding: 10px 4px 6px 0;
+            font-weight: 600;
+            color: #2c4b5c;
+            font-size: 0.7rem;
+        }
+
+        .phase-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #ecf3f8;
+            vertical-align: top;
+        }
+
+        .cost-highlight {
+            font-weight: 700;
+            color: #1c6e43;
+        }
+
+        .gantt-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 0.7rem;
+        }
+
+        .gantt-label {
+            width: 120px;
+            flex-shrink: 0;
+            font-weight: 500;
+        }
+
+        .gantt-bar {
+            flex: 1;
+            height: 28px;
+            background: #e9edf2;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .gantt-fill {
+            background: #2b7a62;
+            height: 100%;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.6rem;
+            line-height: 28px;
+            padding-left: 8px;
+            white-space: nowrap;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+            font-size: 0.7rem;
+        }
+
+        .risk-badge {
+            background: #fef2e8;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .footnote {
+            font-size: 0.7rem;
+            color: #6f8f9f;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 16px;
+            }
+            .stat-value {
+                font-size: 1.4rem;
+            }
+            .gantt-label {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <!-- ШАПКА С ОСНОВНЫМИ ЦИФРАМИ -->
+    <div class="card header-card">
+        <div style="font-size: 0.8rem; letter-spacing: 1px;">⚓ ПОРТОВЫЙ ЭЛЕВАТОРНЫЙ КОМПЛЕКС</div>
+        <div style="font-size: 1.6rem; font-weight: 800; margin: 6px 0 2px;">50 000 тонн хранения</div>
+        <div style="opacity: 0.8; margin-bottom: 12px;">единовременное хранение · портовая перевалка</div>
+        <div class="grid-2col">
+            <div class="stat-box" style="background: rgba(255,255,255,0.12); color: white;">
+                <div class="stat-label" style="color:#cbd5e1;">Бюджет CAPEX</div>
+                <div class="stat-value" style="color:white;">$5.5 млн</div>
+                <div class="stat-sub">≈ 412,5 млн ₽</div>
+            </div>
+            <div class="stat-box" style="background: rgba(255,255,255,0.12); color: white;">
+                <div class="stat-label" style="color:#cbd5e1;">Срок реализации</div>
+                <div class="stat-value" style="color:white;">12–18 мес.</div>
+                <div class="stat-sub">под ключ</div>
+            </div>
+        </div>
+        <div style="margin-top: 12px; font-size: 0.7rem; background: #0a2e32; border-radius: 40px; padding: 6px 12px; text-align: center;">
+            💱 Курс заложен: <strong>1 USD = 75 ₽</strong> (все рублёвые эквиваленты пересчитаны)
+        </div>
+    </div>
+
+    <!-- ДИСКЛЕЙМЕР: предварительные расчёты -->
+    <div class="badge-warning">
+        ⚠️ <strong>Важное примечание:</strong> Все цифры, сроки и распределение бюджета являются <strong>сугубо предварительными</strong> и основаны на укрупнённых отраслевых показателях. Реальная стоимость строительства и ввода в эксплуатацию может меняться в зависимости от геологических условий, портовой инфраструктуры, текущих цен на металл, оборудование и курсов валют. <strong>Данные подлежат обязательной коррекции</strong> после проектных изысканий и получения ТУ.
+    </div>
+
+    <!-- ЭТАПЫ И ИХ СТОИМОСТЬ (ДЕТАЛИЗАЦИЯ) -->
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 10px;">📋 1. Предпроектные изыскания</div>
+        <table class="phase-table">
+            <tr><td>Анализ град. потенциала ЗУ (СЗЗ, ограничения)</td><td align="right">$20k</td><td align="right">1.5 млн ₽</td></tr>
+            <tr><td>Охранные зоны водоема, согласование с рыбниками</td><td align="right">$35k</td><td align="right">2.625 млн ₽</td></tr>
+            <tr><td>Технические условия (эл-во, вода, газ) + анализ мощностей</td><td align="right">$15k</td><td align="right">1.125 млн ₽</td></tr>
+            <tr><td>Юридические обременения / сервитуты</td><td align="right">$12.5k</td><td align="right">0.94 млн ₽</td></tr>
+            <tr style="border-top: 2px solid #e2e8f0;"><th>✅ Итого предпроект</th><th align="right">$82.5k</th><th align="right">6.19 млн ₽</th></tr>
+        </table>
+        <div style="font-size:0.7rem; color:#4b6b7a; margin-top: 6px;">⏱ Срок: 1.5–2 месяца</div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 10px;">📐 2. Проектирование + инженерные изыскания</div>
+        <table class="phase-table">
+            <tr><td>Инженерные изыскания (геология, геодезия, экология, гидрометео)</td><td align="right">$100k</td><td align="right">7.5 млн ₽</td></tr>
+            <tr><td>Разработка ПД (стадия П и Р)</td><td align="right">$200k</td><td align="right">15 млн ₽</td></tr>
+            <tr><td>Экспертиза ПД (негос. / гос. при субсидиях)</td><td align="right">$30k</td><td align="right">2.25 млн ₽</td></tr>
+            <tr style="border-top: 2px solid #e2e8f0;"><th>✅ Итого проектирование</th><th align="right">$330k</th><th align="right">24.75 млн ₽</th></tr>
+        </table>
+        <div style="font-size:0.7rem; color:#4b6b7a;">⏱ Срок: 3–4 месяца (включая экспертизу)</div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 6px;">📄 3. Разрешение на строительство</div>
+        <div style="display: flex; justify-content: space-between; margin: 8px 0;"><span>Получение разрешения + уведомление Госстройнадзора</span> <strong>$27.5k</strong> <span style="color:#2c6e43;">≈2.06 млн ₽</span></div>
+        <div style="font-size:0.7rem;">⏱ Срок: 0.5–1 месяц (параллельно проектированию)</div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 12px;">🏗 4. Строительно-монтажные работы (СМР)</div>
+        <div class="grid-2col" style="gap: 8px;">
+            <div class="stat-box"><div class="stat-label">Фундаменты, площадки</div><div class="stat-value">$800k</div><div>60 млн ₽</div></div>
+            <div class="stat-box"><div class="stat-label">Стены, перекрытия, эстакады</div><div class="stat-value">$500k</div><div>37.5 млн ₽</div></div>
+            <div class="stat-box"><div class="stat-label">Подъездные пути / ж/д ветка</div><div class="stat-value">$240k</div><div>18 млн ₽</div></div>
+        </div>
+        <div style="background:#f1f5f9; border-radius: 20px; padding: 12px; margin-top: 8px;">
+            <span>✔ Общая стоимость СМР: <strong>$1.54 млн</strong> (115.5 млн ₽)</span>
+            <div>⏱ 5–7 месяцев</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1.1rem;">⚙️ 5. Монтаж оборудования</div>
+        <table class="phase-table">
+            <tr><td>Силосы (емкости хранения)</td><td align="right">$600k</td><td align="right">45 млн ₽</td></tr>
+            <tr><td>Нории, конвейеры, транспортное оборудование</td><td align="right">$350k</td><td align="right">26.25 млн ₽</td></tr>
+            <tr><td>Зерносушилка + аспирация, автоматизация (база)</td><td align="right">$260k</td><td align="right">19.5 млн ₽</td></tr>
+            <tr style="border-top:2px solid #e2e8f0;"><th>✅ Итого монтаж</th><th align="right">$1.21 млн</th><th align="right">90.75 млн ₽</th></tr>
+        </table>
+        <div>⏱ 3–4 месяца (параллельно СМР)</div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1.1rem;">🔌 6. Электромонтажные работы</div>
+        <div style="display: flex; justify-content: space-between;"><span>КТП, кабельные линии, внутреннее электроснабжение</span> <strong>$550k</strong> <span>≈41.25 млн ₽</span></div>
+        <div>⏱ 2–3 месяца</div>
+        <div class="risk-badge" style="margin-top: 8px;">⚡ Важно: требуется 1–2 МВт мощности, задержка ТУ до +6 мес.</div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1.1rem;">🔄 7. Пусконаладочные работы (ПНР)</div>
+        <div style="display: flex; justify-content: space-between;"><span>Наладка автоматики, сушилки, норий, систем аспирации</span> <strong>$275k</strong> <span>≈20.63 млн ₽</span></div>
+        <div>⏱ 1.5–2 месяца</div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1.1rem;">✅ 8. Приемка, ввод в эксплуатацию + Госстройнадзор</div>
+        <div style="display: flex; justify-content: space-between;"><span>Финальные проверки, получение ЗОС, лицензирование</span> <strong>$55k</strong> <span>≈4.13 млн ₽</span></div>
+        <div>⏱ ~1 месяц</div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1.1rem;">⚠️ 9. Непредвиденные + логистика (резерв)</div>
+        <div style="display: flex; justify-content: space-between;"><span>Рост цен металла, удорожание доставки, погодные риски</span> <strong>$1.43 млн</strong> <span>≈107.25 млн ₽</span></div>
+        <div class="risk-badge" style="margin-top: 6px;">🔁 Рекомендуемый резерв 25–30% для портовых проектов</div>
+    </div>
+
+    <!-- Сводная таблица ИТОГО по всем этапам (сумма) -->
+    <div class="card" style="background: #eef4fa;">
+        <div style="font-weight: 800; font-size: 1.2rem;">💰 Сводный бюджет (CAPEX)</div>
+        <div class="grid-2col" style="margin-top: 12px;">
+            <div><span class="stat-label">В долларах США</span><div class="stat-value">$5 500 000</div></div>
+            <div><span class="stat-label">В рублях (75 ₽/$)</span><div class="stat-value" style="color:#1c6e43;">412 500 000 ₽</div></div>
+        </div>
+        <div class="legend" style="justify-content: center;">
+            <span>📦 Емкость: 50 000 т</span>
+            <span>⚓ Портовый элеватор</span>
+            <span>📅 План: 12–18 мес.</span>
+        </div>
+    </div>
+
+    <!-- Визуализация Ганта для мобильных (сроки по этапам) -->
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1rem; margin-bottom: 14px;">📅 Диаграмма сроков (мобильный Гант)</div>
+        <div class="gantt-row"><div class="gantt-label">Предпроект</div><div class="gantt-bar"><div class="gantt-fill" style="width: 12%; background:#2c7a5e;">1.5–2 мес</div></div></div>
+        <div class="gantt-row"><div class="gantt-label">Проектирование+эксп</div><div class="gantt-bar"><div class="gantt-fill" style="width: 22%; background:#2c7a5e;">3–4 мес</div></div></div>
+        <div class="gantt-row"><div class="gantt-label">Разрешение</div><div class="gantt-bar"><div class="gantt-fill" style="width: 5%; background:#5f9c7a;">~1 мес</div></div></div>
+        <div class="gantt-row"><div class="gantt-label">СМР</div><div class="gantt-bar"><div class="gantt-fill" style="width: 38%; background:#1e5a4a;">5–7 мес</div></div></div>
+        <div class="gantt-row"><div class="gantt-label">Монтаж оборудования</div><div class="gantt-bar"><div class="gantt-fill" style="width: 22%; background:#368f6b;">3–4 мес</div></div></div>
+        <div class="gantt-row"><div class="gantt-label">Электромонтаж</div><div class="gantt-bar"><div class="gantt-fill" style="width: 16%; background:#368f6b;">2–3 мес</div></div></div>
+        <div class="gantt-row"><div class="gantt-label">ПНР</div><div class="gantt-bar"><div class="gantt-fill" style="width: 11%; background:#4aa77d;">1.5–2 мес</div></div></div>
+        <div class="gantt-row"><div class="gantt-label">Приемка/ввод</div><div class="gantt-bar"><div class="gantt-fill" style="width: 6%; background:#6bb58f;">~1 мес</div></div></div>
+        <div class="footnote" style="margin-top: 12px;">* Условная шкала: 100% = 18 месяцев. Этапы могут частично перекрываться.</div>
+    </div>
+
+    <!-- Специфика портового элеватора + риски -->
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1rem;">⚓ Ключевые факторы для портового расположения</div>
+        <div class="legend" style="flex-direction: column; gap: 8px; margin-top: 12px;">
+            <div>🌊 СЗЗ от акватории 100–200 м → +$20–50k к изысканиям, +1–2 мес согласований</div>
+            <div>🐟 Согласование с рыбниками (рыбоохранная зона) → риск задержки 1–3 мес.</div>
+            <div>⚡ ТУ на эл-во: типовое требование 1–2 МВт. При отсутствии – доп. затраты $200–500k</div>
+            <div>🚆 Ж/д тупик (опционально) → $300–600k, +3–4 мес.</div>
+            <div>💧 Водоотведение, ливневка → бюджет +$50–100k</div>
+        </div>
+    </div>
+
+    <!-- Дополнительные риски и окупаемость -->
+    <div class="card">
+        <div style="font-weight: 700; font-size: 1rem;">📉 Основные риски и коррекции</div>
+        <ul style="margin: 12px 0 0 20px; font-size: 0.75rem; line-height: 1.4;">
+            <li>❄️ Зимняя сварка силосов замедляет работы в 1.5–2 раза</li>
+            <li>🏛️ Госэкспертиза (при субсидиях) может затянуться до 4 месяцев вместо 1</li>
+            <li>📈 Волатильность курса (расчёт в 75₽/$ ориентировочный)</li>
+            <li>🧾 Рост цен на металлоконструкции и импортные нории</li>
+        </ul>
+        <div class="stat-box" style="margin-top: 14px; background: #eaf6f0;">
+            <div class="stat-label">Ориентировочная окупаемость (Payback Period)</div>
+            <div class="stat-value" style="font-size: 1.3rem;">4–6 лет</div>
+            <div class="stat-sub">при загрузке 70–80% и средних тарифах перевалки</div>
+        </div>
+    </div>
+
+    <!-- Отдельное примечание о корректировке расчетов -->
+    <div class="card" style="background: #fef6e0; border: 1px solid #ffde9c;">
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span style="font-size: 1.8rem;">📌</span>
+            <div><strong>Все расчеты являются сугубо предварительными</strong><br>
+            Представленные цифры (бюджет, сроки, распределение по этапам) могут подлежать коррекции после детальных инженерных изысканий, получения ТУ и актуальных коммерческих предложений от подрядчиков. Для принятия инвестиционных решений требуется разработка ТЭО и проектной документации.
+            </div>
+        </div>
+    </div>
+
+    <div class="footnote">
+        ⚓ Дашборд построен на базе открытых отраслевых данных, экспертных оценок и методик укрупненного ценообразования для портовых элеваторов. Актуальность на 2026 г.
+    </div>
+</div>
+</body>
+</html>
